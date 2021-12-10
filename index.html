@@ -1,238 +1,526 @@
-/*
-*邀请码：385087804
-*2021/12/10日更新
-*快手极速版APP版本：9.10.40.2474
-*修复了逛10次商品
-*/
-/**-------------------------打开APP-------------------------------- */
-auto.waitFor()
+<!DOCTYPE html>
+<html>
 
-let times = rawInput("请输入要自动刷的视频次数：", "500")  //用户设置刷视频的个数，默认100
-launchApp("快手极速版");
-console.show()  //显示悬浮窗（需要先打开悬浮窗权限）
-var num = 1;
-var nums = 1;
-sleep(5000)    //等待应用打开
-console.log("准备就绪！")
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta vieportcontent=" width=1080,user-scalable=no">
 
-videos()
-dytimes(1000, 3000)
-
-/**-------------------------打开福利页面-------------------------------- */
-dytimes(1000, 3000)
-setScreenMetrics(1080, 1920);
-let click_xy = [random(731, 794), random(1861, 1877)];
-let x = click_xy[0] / 1080 * device.width;
-let y = click_xy[1] / 1920 * device.height;
-click(x, y);
-dytimes(1000, 3000)
-
-/**-------------------------调用方法-------------------------------- */
-gjrw();
-dytimes(1000, 3000);
-liveds();
-dytimes(1000, 3000);
-welfare();
-dytimes(1000, 3000);
-console.log('脚本运行完毕');
-exit();
-/**-------------------------10次福利金币-------------------------------- */
-
-function welfare() {
-    swipe(device.width / 2, device.height * (8 / 9), device.width / 2, device.height * (1 / 2), 150)
-    dytimes(3000, 5000);
-    var i = 1
-    while (true) {
-        i = i + 1;
-        if (text("福利 领金币").findOnce()) {
-            text("福利 领金币").click();
-            console.log("第" + i + "次广告福利")
-            //等待广告关闭按钮点击
-            dytimes(3000, 5000);
-            id("video_close_icon").waitFor()
-            id("video_close_icon").click()
-            dytimes(3000, 5000);
+    <title>Document</title>
+    <style>
+        * {
+            font-size: 1.25em;
         }
-        if (text("福利").findOnce()) {
-            text("福利").click();
-            console.log("第" + i + "次广告福利")
-            //等待广告关闭按钮点击
-            dytimes(3000, 5000);
-            id("video_close_icon").waitFor()
-            id("video_close_icon").click()
-            dytimes(3000, 5000);
-        }
-        if (className("android.view.View").text("明天看视频继续领取1000金币").exists() || i == 20) {
-            console.log("10次广告福利结束啦！" + i);
-            break;
-        }
-    }
-}
 
-/**-------------------------10次直播金币-------------------------------- */
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
 
-function liveds() {
-    if (className("android.widget.TextView").text("1100金币直播任务").findOne(2000)) {
-        console.log("开始 [1100金币直播任务]");
-        pdkzb();
+        }
+
+        body {
+            background-color: #fff;
+        }
+
+        .box {
+            display: flex;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border: solid 1px #000;
+            margin: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+        }
+
+        #box {
+            position: absolute;
+            top: 935px;
+            left: 515px;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border: solid 1px #000;
+        }
+
+        .box img,
+        #box img {
+            width: 100%;
+            height: 100%;
+        }
+
+        #bbox {
+            height: 1920px;
+            width: 1080px;
+            border: dashed 5px #7e7e7e;
+        }
+
+        #file {
+            position: absolute;
+            display: block;
+            width: 100%;
+            height: 100%;
+            right: 0;
+            top: 0;
+            opacity: 0;
+        }
+
+        #file-box {
+            position: fixed;
+            top: 960px;
+            left: 20px;
+            height: 100px;
+            width: 100px;
+            border-radius: 50%;
+            border: solid 1px #7e7e7e;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #file-box:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+        }
+
+        #console_box {
+            position: fixed;
+            height: 100%;
+            width: 100%;
+            background: #00000009;
+            display: none;
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+
+        }
+
+        #cont_box {
+            width: 95%;
+            height: 70%;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 0 45px rgb(0 0 0 / 20%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+            flex-direction: column;
+            padding-top: 250px;
+        }
+
+        .btn_box {
+
+            width: 50%;
+            height: 100px;
+            line-height: 100px;
+            border-radius: 20px;
+            text-align: center;
+            background: #62beff;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 13px rgb(0 0 0 / 15%);
+            margin: 10px;
+            font-size: 1em;
+        }
+
+        #x_box {
+            position: fixed;
+            top: 55px;
+            display: flex;
+            justify-content: end;
+            align-items: center;
+            width: 85%;
+            height: auto;
+            padding: 20px 30px;
+            background: #fff;
+            border-radius: 50px;
+            box-shadow: 0 0 20px rgb(0 0 0 / 10%);
+        }
+
+        #x_box div {
+            width: 100%;
+            text-align: center;
+        }
+
+        .menu_box {
+            width: 80%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 13px rgb(0 0 0 / 15%);
+            /* justify-content: center; */
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .menu_box input {
+            width: 20%;
+            margin: 5px;
+            padding: 5px 0px 5px 5px;
+            border: solid .08em #eee;
+            border-radius: 4px;
+            outline: none;
+            text-align: center;
+            font-size: 1em;
+
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="console_box">
+
+        <div id="cont_box">
+            <div id="x_box">
+                <div>控制台</div>
+                <img src="https://img.icons8.com/fluency/48/fa314a/delete-sign.png" onclick="close_box()" />
+            </div>
+            <div class="menu_box">
+                <span style="margin: 10px;font-size: 1em;">设置大小</span>
+                <div class="box">
+                    <img src="https://img.icons8.com/material-rounded/96/4a90e2/tap.png" />
+                </div>
+                <span style="margin: 10px;font-size: 1em;">宽<input type="number" value="50" id="w_inp" /><span
+                        style="font-size: 0.8em;margin: 10px;" onclick="w_u()">🔼</span><span
+                        style="font-size: 0.8em;margin: 10px;" onclick="w_d()">🔽</span></span>
+                <span style="margin: 10px;font-size: 1em;">高<input type="number" value="50" id="h_inp" /><span
+                        style="font-size: 0.8em;margin: 10px;" onclick="h_u()">🔼</span><span
+                        style="font-size: 0.8em;margin: 10px;" onclick="h_d()">🔽</span></span>
+            </div>
+            <div class="menu_box">
+                <span style="margin: 10px;font-size: 1em;">点击此处</span>
+                <div class="btn_box" onclick="cp_cli()">复制</div>
+            </div>
+            <div class="menu_box">
+                <span style="margin: 10px;font-size: 1em;" >滑动屏幕</span>
+                <div class="btn_box" onclick="s_h()" id="ksjs">此处开始</div>
+                <span style="margin: 10px;font-size: 1em;">滑动速度<input type="number" value="250" />毫秒</span>
+            </div>
+            <div class="menu_box">
+                <span style="margin: 10px;font-size: 1em;">等待</span>
+                <span style="margin: 10px;font-size: 1em;">等待时间<input type="number" value="250" />毫秒</span>
+                <div class="btn_box" onclick="">复制</div>
+            </div>
+            <div class="menu_box">
+                <span style="margin: 10px;font-size: 1em;">长按此处</span>
+                <span style="margin: 10px;font-size: 1em;">长按时间<input type="number" value="800" />毫秒</span>
+                <div class="btn_box" onclick="">复制</div>
+            </div>
+        </div>
+
+    </div>
+    <div id="file-box">
+        <input id="file" class="filepath" onchange="changepic(this)" type="file">
+        <img
+            src="https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/000000/external-upload-interface-kiranshastry-lineal-color-kiranshastry.png" />
+    </div>
+
+    <div id="bbox">
+        <div id="box" onclick="console__box()">
+            <img src="https://img.icons8.com/material-rounded/96/4a90e2/tap.png" />
+        </div>
+        <img src="" id="show" width="100%" height="100%" alt="">
+    </div>
+    <script>
+/*******************************************//*******************************************/
+
+//设置触发区域宽高        
+        document.getElementById('w_inp').oninput = function(){                      
+            document.getElementById('box').style.width = w_inp.value + 'px';
+            document.getElementsByClassName('box')[0].style.width = w_inp.value + 'px';
+		}
+        document.getElementById('h_inp').oninput = function(){                      
+            document.getElementById('box').style.height = h_inp.value + 'px';
+            document.getElementsByClassName('box')[0].style.height = h_inp.value + 'px';
+		}
+        function w_u() {
+            //宽+
+            document.getElementById('box').style.width = document.getElementById('box').clientWidth + 1 + 'px';
+            document.getElementsByClassName('box')[0].style.width = document.getElementsByClassName('box')[0].clientWidth + 1 + 'px';
+            document.getElementById('w_inp').value = document.getElementById('box').clientWidth;
+        }
+        function w_d() {
+            //宽-
+            document.getElementById('box').style.width = document.getElementById('box').clientWidth - 1 + 'px';
+            document.getElementsByClassName('box')[0].style.width = document.getElementsByClassName('box')[0].clientWidth - 1 + 'px';
+            document.getElementById('w_inp').value = document.getElementById('box').clientWidth;
+        }
+        function h_u() {
+            //高+
+            document.getElementById('box').style.height = document.getElementById('box').clientHeight + 1 + 'px';
+            document.getElementsByClassName('box')[0].style.height = document.getElementsByClassName('box')[0].clientHeight + 1 + 'px';
+            document.getElementById('h_inp').value = document.getElementById('box').clientHeight;
+
+        }
+        function h_d() {
+            //高-
+            document.getElementById('box').style.height = document.getElementById('box').clientHeight - 1 + 'px';
+            document.getElementsByClassName('box')[0].style.height = document.getElementsByClassName('box')[0].clientHeight - 1 + 'px';
+            document.getElementById('h_inp').value = document.getElementById('box').clientHeight;
+
+        }
+//设置触发区域宽高end
+     
+/*******************************************//*******************************************/
+
+//点击此处代码
+        var nums = 1;
+        function cp_cli() {
+            let l = parseInt(document.getElementById('box').getBoundingClientRect().left);
+            let r = parseInt(document.getElementById('box').getBoundingClientRect().right);
+            let t = parseInt(document.getElementById('box').getBoundingClientRect().top);
+            let b = parseInt(document.getElementById('box').getBoundingClientRect().bottom);
+            let cont = `setScreenMetrics(1080, 1920);
+let click_xy${nums} = [random(${l}, ${r}), random(${t}, ${b})];
+let x${nums} = click_xy${nums}[0] / 1080 * device.width;
+let y${nums} = click_xy${nums}[1] / 1920 * device.height;
+click(x${nums}, y${nums});
+`;
+            nums = nums + 1;
+            // console.log(cont);
+            // const textarea = document.createElement("textarea");
+            // document.body.appendChild(textarea);
+            // textarea.value = cont;
+            // textarea.select();
+            // try {
+            //     if (document.execCommand("copy", false)) {
+            //         bftip("1", "复制 [点击代码] 成功")
+            //     } else {
+            //         console.log("复制失败");
+            //         bftip("2", "复制 [点击代码] 失败")
+            //     }
+            // } catch (error) {
+            //     console.log(error, "error")
+            // } finally {
+            //     textarea.remove();
+            // }
+            this_copy(cont);
+            close_box();
+
+        }
+//点击此处代码end
+
+/*******************************************//*******************************************/
+//滑动开始
+var s_nums = 0;
+function s_h(){
+    let swipe1 = "";
+    let swipe2 = "";
+    let lrtb = [];
+    let l = parseInt(document.getElementById('box').getBoundingClientRect().left);
+    let r = parseInt(document.getElementById('box').getBoundingClientRect().right);
+    let t = parseInt(document.getElementById('box').getBoundingClientRect().top);
+    let b = parseInt(document.getElementById('box').getBoundingClientRect().bottom);
+    s_nums = s_nums + 1
+    if(s_nums == 1){
+        document.getElementById("ksjs").innerText = "此处结束";
+        bftip("0","选择滑动结束点");
+        lrtb.push(l,r,t,b);
+        close_box();
+    }else if(s_nums == 2){
+        document.getElementById("ksjs").innerText = "复制";
+        bftip("1","获取滑动距离成功");
     }else{
-        console.log("未找到 [1100金币直播任务]");
-    }
-    //
-}
-function pdkzb(){
-    // className("android.view.View").text("今日已成功领取直播奖励金币").findOne().click()
-    if (className("android.widget.Button").text("已完成").findOne(2000)) {
-        console.log("已完成10次 [1100金币直播任务]");
-    } else {
-        console.log("第" + num + "次直播奖励");
-        kzb();
-    }
+        close_box();
+        document.getElementById("ksjs").innerText = "此处开始";
+        s_nums = 0;
+
+    };
+
+
 
 }
-function kzb(){
-    if(className("android.widget.TextView").text("1100金币直播任务").findOne(2000)){
-        className("android.widget.TextView").text("1100金币直播任务").findOne(2000).click()
-        sleep(2222);
-        console.log("进入直播间")
-        setScreenMetrics(1080, 1920);
-        let click_xy = [random(211, 304), random(1166, 1255)];
-        let x = click_xy[0] / 1080 * device.width;
-        let y = click_xy[1] / 1920 * device.height;
-        click(x, y);
-        sleep(random(62444,63999));
-        back();
-        console.log("刷新直播间")
-        swipe(random(480, 624), random(920, 955),random(457, 639), random(1452, 1555), random(155, 222));
-        sleep(random(2555, 3666));
-        back();
-        num = num + 1;
-        sleep(random(999,1222));
-        liveds();
 
 
-    }
-    //
-}
 
-/**-------------------------按需刷小视频-------------------------------- */
-function videos() {
-    for (var i = 0; i < times; ++i) {
-        nextVideo(device.width / 2, device.height * (8 / 9), device.width / 2, device.height * (1 / 4), 150)
-        u = i + 1
-        console.log("总任务量：" + times + ";已完成：" + u)
-        /*随机回看 */
-        j = random(1, 20)
-        if (j == 3) {
-            lookBack()
+//滑动结束
+
+/*******************************************//*******************************************/
+
+//显示控制台
+        function console__box() {
+            document.getElementById('console_box').style.display = 'flex';
+
         }
-        if (j == 20) {
-            nextTwo()
+//显示控制台end
+
+//关闭控制台        
+function close_box() {
+            document.getElementById('console_box').style.display = 'none';
         }
-        if (i == times) {
-            break;
-        }
-    }
-}
+//关闭控制台end
 
-/**-------------------------各种方法-------------------------------- */
-function nextVideo(x1, y1, x2, y2, duration) {
-    swipe(x1, y1, x2, y2, duration)
-    delayTime = random(8000, 12000)
-    sleep(delayTime)    //在视频停留8-12秒
-}
-
-/*随机往回滑动 */
-function lookBack() {
-    let back = random(1, 20)
-    if (back == 1) {
-        console.log("开始往回看一个视频")
-        swipe(device.width / 2, device.height * (1 / 4), device.width / 2, device.height * (8 / 9), 150)
-        sleep(random(10000, 15000))
-    }
-}
-
-/*向下滑动两个 在向回滑动之后执行 */
-function nextTwo() {
-    swipe(device.width / 2, device.height * (8 / 9), device.width / 2, device.height * (1 / 4), 150)
-    swipe(device.width / 2, device.height * (8 / 9), device.width / 2, device.height * (1 / 4), 150)
-    sleep(random(10000, 15000))
-}
-
-function dytimes(time1, time2) {
-    delayTime = random(time1, time2)
-    sleep(delayTime)    //在视频停留8-12秒
-}
-
-
-
-//5.5到6.6秒滑动一次屏幕
-function hd() {
-    swipe(random(457, 639), random(1438, 1605), random(457, 639), random(1016, 1183), random(155, 222));
-    sleep(random(5555, 6666));
-};
-
-
-
-/**-------------------------逛街任务-------------------------------- */
-function gjrw() {
-    if (className("android.widget.TextView").text("逛街领1000金币").findOne(2000)) {
-        console.log("开始 [逛街领500金币任务]");
-        pdgj();
-    }else{
-        console.log("没有找到 [逛街领500金币任务]");
-    }
-    //
-}
-function pdgj(){
-
-    if (className("android.widget.Button").text("已领取").findOne(2000)) {
-        console.log("已经完成10次 [逛街领500金币任务]");
-    } else {
-        console.log("第" + nums + "次逛街奖励");
-        ksgj();
-    }
-
-}
-function ksgj(){
-    if(className("android.widget.TextView").text("逛街领500金币").findOne(2000)){
-        className("android.widget.TextView").text("逛街领500金币").findOne().click()
-        sleep(2222);
-        for (let x = 0; x < 5; x++) {
-            hd2();
-            hd2();
-            hd2();
-            hd2();
-            if(className("android.view.View").text("了解详情").findOnce()){
-                console.log("随便点击一个 [了解详情]");
-                className("android.view.View").text("了解详情").findOnce().click();
-                sleep(random(888,999));
-                hd2();
-                hd2();
-                hd2();
-                hd2();
-                console.log("返回商品页面")
-                back();
+/*******************************************//*******************************************/
+//复制
+function this_copy(cont){
+    const textarea = document.createElement("textarea");
+            document.body.appendChild(textarea);
+            textarea.value = cont;
+            textarea.select();
+            try {
+                if (document.execCommand("copy", false)) {
+                    bftip("1", "复制 [点击代码] 成功")
+                } else {
+                    console.log("复制失败");
+                    bftip("2", "复制 [点击代码] 失败")
+                }
+            } catch (error) {
+                console.log(error, "error")
+            } finally {
+                textarea.remove();
             }
-        }
-        sleep(2222);
-        back();
-        sleep(333);
-        if(className("android.view.View").text("要放弃50金币吗，现在退出将失去当前任务进度").findOne(2000)){
-            className("android.view.View").text("放弃奖励").findOne(1000).click();
-        }
-        sleep(999);
-        nums=nums+1;
-        pdgj();
-
-    }
-    //
 }
 
+//复制end
 
 
-//2.5到2.8秒滑动一次屏幕
-function hd2() {
-    swipe(random(457, 639), random(1438, 1605), random(457, 639), random(1016, 1183), random(155, 222));
-    sleep(random(2555, 2866));
-};
+/*******************************************//*******************************************/
+
+//上传图片预览
+        function changepic(obj) {
+            //console.log(obj.files[0]);//这里可以获取上传文件的name
+            var newsrc = getObjectURL(obj.files[0]);
+            document.getElementById('show').src = newsrc;
+        }
+        //建立一個可存取到該file的url
+        function getObjectURL(file) {
+            var url = null;
+            // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
+            if (window.createObjectURL != undefined) { // basic
+                url = window.createObjectURL(file);
+            } else if (window.URL != undefined) { // mozilla(firefox)
+                url = window.URL.createObjectURL(file);
+            } else if (window.webkitURL != undefined) { // webkit or chrome
+                url = window.webkitURL.createObjectURL(file);
+            }
+            return url;
+        }
+//上传图片预览end
+
+/*******************************************//*******************************************/
+
+//触摸移动
+        var div = document.querySelector('#box');
+        var startX = 0; // 获取手指初始坐标
+        var startY = 0;
+        var x = 0; // 获得盒子原来的位置
+        var y = 0;
+        // 手指触摸
+        div.addEventListener('touchstart', function (e) {
+            // 获取手指初始坐标
+            startX = e.targetTouches[0].pageX;
+            startY = e.targetTouches[0].pageY;
+            x = this.offsetLeft;
+            y = this.offsetTop;
+            this.style.boxShadow = '0 0 10px rgba(0, 0, 0, .3)';
+        });
+        // 手指离开
+        div.addEventListener('touchend', function (e) {
+            this.style.boxShadow = '';
+            // console.log("顶部" + parseInt(document.getElementById('box').getBoundingClientRect().top));
+            // console.log("底部" + parseInt(document.getElementById('box').getBoundingClientRect().bottom));
+            // console.log("左边" + parseInt(document.getElementById('box').getBoundingClientRect().left));
+            // console.log("右边" + parseInt(document.getElementById('box').getBoundingClientRect().right));
+
+        });
+
+        // 手指按住移动
+        div.addEventListener('touchmove', function (e) {
+            // 计算手指的移动距离：手指移动之后的坐标减去手指初始的坐标
+            var moveX = e.targetTouches[0].pageX - startX;
+            var moveY = e.targetTouches[0].pageY - startY;
+            // 移动盒子 盒子原来的位置 + 手指移动的距离
+            this.style.left = x + moveX + 'px';
+            this.style.top = y + moveY + 'px';
+
+            e.preventDefault(); // 阻止屏幕滚动的默认行为
+        });
+
+        var filediv = document.querySelector('#file-box');
+        var startX2 = 0; // 获取手指初始坐标
+        var startY2 = 0;
+        var x2 = 0; // 获得盒子原来的位置
+        var y2 = 0;
+        // 手指触摸
+        filediv.addEventListener('touchstart', function (e) {
+            // 获取手指初始坐标
+            startX2 = e.targetTouches[0].pageX;
+            startY2 = e.targetTouches[0].pageY;
+            x2 = this.offsetLeft;
+            y2 = this.offsetTop;
+            this.style.boxShadow = '0 0 10px rgba(0, 0, 0, .3)';
+        });
+        // 手指离开
+        filediv.addEventListener('touchend', function (e) {
+            this.style.boxShadow = '';
+        });
+
+        // 手指按住移动
+        filediv.addEventListener('touchmove', function (e) {
+            // 计算手指的移动距离：手指移动之后的坐标减去手指初始的坐标
+            var moveX2 = e.targetTouches[0].pageX - startX2;
+            var moveY2 = e.targetTouches[0].pageY - startY2;
+            // 移动盒子 盒子原来的位置 + 手指移动的距离
+            this.style.left = x2 + moveX2 + 'px';
+            this.style.top = y2 + moveY2 + 'px';
+            e.preventDefault(); // 阻止屏幕滚动的默认行为
+        });
+//触摸移动end
+
+/*******************************************//*******************************************/
+
+//bftip("消息类型（数字0-3）","消息内容（文本）");  0：消息、 1：正确、 2：错误、 3：感叹
+        function bftip(type, text) {
+            // this.type = type;
+            // this.text = text;
+
+            // console.log(type);
+            // console.log(text);
+            if (document.getElementById("tip_box")) {
+            } else {
+                var tip_box = document.createElement('div');
+                tip_box.id = "tip_box";
+                tip_box.style = "position: fixed;right: 0;top: 20px;/*pointer-events: none;*/z-index: 9999;width: 1080px;height: auto;display: flex;flex-flow: column-reverse;align-items: flex-end;";
+                document.body.appendChild(tip_box);
+            }
+
+            var tip_msg_box = document.createElement('div');
+            tip_msg_box.style = "transition: all 300ms;padding: 35px;height: auto;width: 0px;/* width: 50%; */display: flex;align-items: center;justify-content: center;background: #fff;border-radius: 14px;margin: 5px;-moz-box-shadow: 0px 1px 4px #c9c9c9;-webkit-box-shadow: 0px 1px 4px #c9c9c9;box-shadow: 0px 1px 4px #c9c9c9;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 10px;z-index: 9999;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;";
+            tip_msg_box.setAttribute("onclick", "javascript:this.parentNode.removeChild(this);");
+            tip_msg_box.title = "点击关闭";
+            var tip_msg = document.createElement('div');
+            tip_msg.style = "width: 225px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;text-align: center;";
+            tip_msg.innerText = text;
+
+            if (type == "1") {
+                tip_msg_box.innerHTML = "✔️  " + tip_msg.innerText;
+            }
+            if (type == "2") {
+                tip_msg_box.innerHTML = "❌  " + tip_msg.innerText;
+            }
+            if (type == "3") {
+                tip_msg_box.innerHTML = "❗  " + tip_msg.innerText;
+            }
+            if (type == "0") {
+                tip_msg_box.innerHTML = "💬  " + tip_msg.innerText;
+            }
+
+            document.getElementById('tip_box').appendChild(tip_msg_box);
+            window.setTimeout(function () { tip_msg_box.style = "transition: all 300ms;padding: 35px;height: auto;width: 50%;display: flex;align-items: center;justify-content: center;background: #fff;border-radius: 14px;margin: 5px;-moz-box-shadow: 0px 1px 4px #c9c9c9;-webkit-box-shadow: 0px 1px 4px #c9c9c9;box-shadow: 0px 1px 4px #c9c9c9;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 10px;z-index: 9999;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;"; }, 0);
+            window.setTimeout(function () { tip_msg_box.style = "transition: all 300ms;padding: 35px;height: auto;width: 0px;display: flex;align-items: center;justify-content: center;background: #fff;border-radius: 14px;margin: 5px;-moz-box-shadow: 0px 1px 4px #c9c9c9;-webkit-box-shadow: 0px 1px 4px #c9c9c9;box-shadow: 0px 1px 4px #c9c9c9;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 10px;z-index: 9999;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;"; }, 2500);
+            window.setTimeout(function () { document.getElementById('tip_box').removeChild(tip_msg_box); }, 2750);
+        };
+
+
+    </script>
+</body>
+
+</html>
