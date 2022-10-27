@@ -1,5 +1,5 @@
 "ui";
-ui.statusBarColor("#ffffff")
+ui.statusBarColor("#000000")
 ui.layout(
     <vertical id="bfbox" w="*" gravity="center">
         <frame gravity="center" layout_gravity="center|top">
